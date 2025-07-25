@@ -2,44 +2,58 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Tander QR</title>
+  <title>Динамический QR для Tander</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 30px; }
-    #qrcode { margin-top: 20px; }
-    .small { color: #888; font-size: 14px; }
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 50px;
+      background-color: #f8f8f8;
+    }
+    #qrcode {
+      margin: 20px auto;
+      width: 256px;
+      height: 256px;
+    }
+    .info {
+      font-size: 14px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
-  <h1>QR для Tander</h1>
+  <h1>QR-код для сканирования</h1>
   <div id="qrcode"></div>
-  <p class="small" id="info"></p>
+  <div class="info" id="info"></div>
 
   <script>
-    function generateQR() {
-      const id = "25491144";       // ID сотрудника
-      const role = "3";            // Роль (должность)
-      const ts = Math.floor(Date.now() / 1000);  // Время в секундах (Unix timestamp)
+    const id = "25491144";  // Статичный ID сотрудника
+    const role = "3";        // Роль (например, 3 = кассир)
 
-      const data = `https://bio-prod.corp.tander.ru/qr/?id=${id}&ts=${ts}&role=${role}`;
+    function updateQRCode() {
+      const ts = Math.floor(Date.now() / 1000);  // Время в секундах
+      const qrData = `${id}|${ts}|${role}`;      // Пример: 25491144|1753437012|3
 
-      document.getElementById("info").innerText = `Содержимое QR: ${data}`;
+      // Показываем текстовое содержимое
+      document.getElementById('info').innerText = `QR-содержимое: ${qrData}`;
 
-      // Очистка и генерация нового
-      document.getElementById("qrcode").innerHTML = "";
+      // Очищаем старый QR
+      document.getElementById('qrcode').innerHTML = "";
+
+      // Генерируем новый QR
       new QRCode(document.getElementById("qrcode"), {
-        text: data,
+        text: qrData,
         width: 256,
         height: 256,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.M
       });
     }
 
-    // Генерация при загрузке
-    generateQR();
-
-    // Обновление каждые 5 секунд
-    setInterval(generateQR, 5000);
+    updateQRCode();                   // Первый запуск
+    setInterval(updateQRCode, 1000);  // Обновление каждую секунду
   </script>
 </body>
 </html>
