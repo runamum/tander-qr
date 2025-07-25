@@ -1,48 +1,45 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Автообновляемый QR-код</title>
+  <meta charset="UTF-8">
+  <title>Tander QR</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: auto; }
-    label { display: block; margin-bottom: 10px; }
+    body { font-family: sans-serif; text-align: center; padding: 30px; }
     #qrcode { margin-top: 20px; }
+    .small { color: #888; font-size: 14px; }
   </style>
 </head>
 <body>
+  <h1>QR для Tander</h1>
+  <div id="qrcode"></div>
+  <p class="small" id="info"></p>
 
-<h1>Автообновляемый QR-код</h1>
+  <script>
+    function generateQR() {
+      const id = "25491144";       // ID сотрудника
+      const role = "3";            // Роль (должность)
+      const ts = Math.floor(Date.now() / 1000);  // Время в секундах (Unix timestamp)
 
-<label>
-  ID: <input type="number" id="inputId" value="25491144" />
-</label>
-<label>
-  Должность (число): <input type="number" id="inputPosition" value="3" />
-</label>
+      const data = `https://bio-prod.corp.tander.ru/qr/?id=${id}&ts=${ts}&role=${role}`;
 
-<div id="qrcode"></div>
+      document.getElementById("info").innerText = `Содержимое QR: ${data}`;
 
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-<script>
-  const inputId = document.getElementById('inputId');
-  const inputPosition = document.getElementById('inputPosition');
-  const qrcodeContainer = document.getElementById('qrcode');
+      // Очистка и генерация нового
+      document.getElementById("qrcode").innerHTML = "";
+      new QRCode(document.getElementById("qrcode"), {
+        text: data,
+        width: 256,
+        height: 256,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
 
-  let qrcode = new QRCode(qrcodeContainer, {
-    width: 200,
-    height: 200,
-  });
+    // Генерация при загрузке
+    generateQR();
 
-  function generateQR() {
-    const id = Number(inputId.value);
-    const position = Number(inputPosition.value);
-    const time = Math.floor(Date.now() / 1000);
-
-    const data = { id, time, position };
-    const jsonStr = JSON.stringify(data);
-    const base64 = btoa(jsonStr);
-
-    // Очищаем предыдущий QR
-    qrcodeContainer.innerHTML = "";
-    qrcode = new QRCode(qrcodeContainer, {
-      width: 200,
+    // Обновление каждые 5 секунд
+    setInterval(generateQR, 5000);
+  </script>
+</body>
+</html>
