@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Tander</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding-top: 60px; background: #f0f0f0; }
+    #qrcode { margin: auto; width: 256px; height: 256px; background: white; padding: 16px; border-radius: 8px; }
+    #data { margin-top: 20px; font-size: 18px; color: #333; }
+  </style>
+</head>
+<body>
+  <h1>QR‑код для Tander</h1>
+  <div id="qrcode"></div>
+  <div id="data"></div>
+  <script>
+    const personID = "25488406";
+    const typeCode = "3";
+    function updateQR() {
+      const ts = Math.floor(Date.now() / 1000);
+      const content = `${personID},${ts},${typeCode}`;
+      document.getElementById("data").textContent = content;
+      const container = document.getElementById("qrcode");
+      container.innerHTML = "";
+      new QRCode(container, {
+        text: content,
+        width: 240,
+        height: 240
+      });
+    }
+    updateQR();
+    setInterval(updateQR, 1000);
+  </script>
+</body>
+</html>
