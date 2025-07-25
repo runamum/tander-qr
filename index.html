@@ -2,35 +2,51 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>QR Tander</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <title>Генератор QR Tander</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <style>
-    body { font-family: sans-serif; text-align: center; padding-top: 60px; background: #f0f0f0; }
-    #qrcode { margin: auto; width: 256px; height: 256px; background: white; padding: 16px; border-radius: 8px; }
-    #data { margin-top: 20px; font-size: 18px; color: #333; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    #qrcode {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>QR‑код для Tander</h1>
-  <div id="qrcode"></div>
-  <div id="data"></div>
-  <script>
-    const personID = "25488406";
-    const typeCode = "3";
-    function updateQR() {
-      const ts = Math.floor(Date.now() / 1000);
-      const content = `${personID},${ts},${typeCode}`;
-      document.getElementById("data").textContent = content;
-      const container = document.getElementById("qrcode");
-      container.innerHTML = "";
-      new QRCode(container, {
-        text: content,
-        width: 240,
-        height: 240
-      });
-    }
-    updateQR();
-    setInterval(updateQR, 1000);
-  </script>
+
+<h2>Генератор QR-кода (Tander-стиль)</h2>
+
+<label for="role">Роль (1 = кассир, 2 = товаровед, 3 = директор):</label><br>
+<input type="number" id="role" value="3" min="1" max="3"><br>
+<button onclick="generateQR()">Сгенерировать QR</button>
+
+<div id="qrcode"></div>
+
+<script>
+  function generateQR() {
+    const role = document.getElementById('role').value || "3";
+    const randomId = Math.floor(Math.random() * 90000000) + 10000000; // 8-значный случайный ID
+    const timestamp = Math.floor(Date.now() / 1000); // UNIX timestamp
+    const qrText = `${randomId},${timestamp},${role}`;
+
+    document.getElementById('qrcode').innerHTML = ''; // Очистка
+
+    // Генерация QR
+    QRCode.toCanvas(qrText, { width: 256 }, function (err, canvas) {
+      if (err) console.error(err);
+      else document.getElementById('qrcode').appendChild(canvas);
+    });
+
+    console.log("QR данные:", qrText); // Для отладки
+  }
+</script>
+
 </body>
 </html>
